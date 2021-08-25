@@ -1,0 +1,51 @@
+from matplotlib import pyplot as plt
+import numpy as np
+
+h = 0.5 # days
+transmission_coeff = 5e-9 # 1 / day person
+latency_time = 1. # days
+infectious_time = 5. # days
+
+end_time = 60.0 # days
+num_steps = int(end_time / h)
+times = h * numpy.array(range(num_steps + 1))
+
+def seir_model():
+
+    s = np.zeros(num_steps + 1)
+    e = np.zeros(num_steps + 1)
+    i = np.zeros(num_steps + 1)
+    r = np.zeros(num_steps + 1)
+
+    s[0] = 1e8 - 1e6 - 1e5
+    e[0] = 0.
+    i[0] = 1e5
+    r[0] = 1e6
+    
+    E_I = 1 / latency_time
+    I_R = 1 / infectious_time
+    
+    for step in range(num_steps):
+        s[step + 1] = s[step] - h * transmission_coeff * s[step] * i[step]
+        e[step + 1] = e[step] + h * transmission_coeff * s[step] * i[step] - h * E_I * e[step]
+        i[step + 1] = i[step] + h * E_I * e[step] - h * I_R * i[step]
+        r[step + 1] = r[step] + h * I_R * i[step]
+        
+    return s, e, i, r
+
+s, e, i, r = seir_model()
+
+def plot_me():
+    s_plot = plt.plot(times, s, label = 'S')
+    e_plot = plt.plot(times, e, label = 'E')
+    i_plot = plt.plot(times, i, label = 'I')
+    r_plot = plt.plot(times, r, label = 'R')
+    plt.legend(('S', 'E', 'I', 'R'), loc = 'upper right')
+    
+    axes = plt.gca()
+    axes.set_xlabel('Time in days')
+    axes.set_ylabel('Number of persons')
+    plt.xlim(xmin = 0.)
+    plt.ylim(ymin = 0.)
+    
+plot_me()
