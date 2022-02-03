@@ -8,7 +8,7 @@ infectious_time = 5. # days
 
 end_time = 60.0 # days
 num_steps = int(end_time / h)
-times = h * numpy.array(range(num_steps + 1))
+times = h * np.array(range(num_steps + 1))
 
 def seir_model():
 
